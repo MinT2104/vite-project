@@ -1,11 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePopupStore } from "../../stores/PopupStore";
+import { useSwipeCardStore } from "../../stores/SwipeCard";
+import { ApiClient } from "../../services/api/ApiClient";
+import moment from "moment";
+
+type getStudentDataType = {
+  uid: string;
+  name: string;
+  card: string;
+  gender: number;
+  email: string;
+  phoneNumber: string;
+  classID: string;
+  address: string;
+  major: string;
+  lastModified: string;
+  createdAt: string;
+};
 
 const TableStudents = () => {
-  const { setIsPopupAddStudent } = usePopupStore();
+  const { setIsPopupAddStudent, isReFetchingStudentTable } = usePopupStore();
+  const { setSwipeCardState } = useSwipeCardStore();
+
+  const [listStudent, setListStudent] = useState<getStudentDataType[]>();
+
+  const getAllStudent = async () => {
+    try {
+      const res = await ApiClient.get("/students");
+      setListStudent(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllStudent();
+  }, [isReFetchingStudentTable]);
 
   return (
-    <div className="p-4">
+    <div className="">
       <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
           <div className="flex items-center justify-between gap-8 mb-8">
@@ -25,7 +58,10 @@ const TableStudents = () => {
                 view all
               </button>
               <button
-                onClick={() => setIsPopupAddStudent(true)}
+                onClick={() => {
+                  setSwipeCardState(true);
+                  setIsPopupAddStudent(true);
+                }}
                 className="flex select-none items-center gap-3 rounded-lg bg-sky-500 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                 type="button"
               >
@@ -34,7 +70,7 @@ const TableStudents = () => {
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   aria-hidden="true"
-                  stroke-width="2"
+                  strokeWidth="2"
                   className="w-4 h-4"
                 >
                   <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
@@ -60,24 +96,6 @@ const TableStudents = () => {
                     </div>
                     <div className="absolute inset-0 z-10 h-full bg-white rounded-md shadow"></div>
                   </li>
-                  <li
-                    role="tab"
-                    className="relative flex items-center justify-center w-full h-full px-2 py-1 font-sans text-base antialiased font-normal leading-relaxed text-center bg-transparent cursor-pointer select-none text-blue-gray-900"
-                    data-value="monitored"
-                  >
-                    <div className="z-20 text-inherit">
-                      &nbsp;&nbsp;Monitored&nbsp;&nbsp;
-                    </div>
-                  </li>
-                  <li
-                    role="tab"
-                    className="relative flex items-center justify-center w-full h-full px-2 py-1 font-sans text-base antialiased font-normal leading-relaxed text-center bg-transparent cursor-pointer select-none text-blue-gray-900"
-                    data-value="unmonitored"
-                  >
-                    <div className="z-20 text-inherit">
-                      &nbsp;&nbsp;Unmonitored&nbsp;&nbsp;
-                    </div>
-                  </li>
                 </ul>
               </nav>
             </div>
@@ -88,14 +106,14 @@ const TableStudents = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     aria-hidden="true"
                     className="w-5 h-5"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                     ></path>
                   </svg>
@@ -111,7 +129,7 @@ const TableStudents = () => {
             </div>
           </div>
         </div>
-        <div className="p-6 px-0 overflow-hidden">
+        <div className="p-6 px-0 overflow-auto scrollbar">
           <table className="w-full mt-4 text-left table-auto min-w-max">
             <thead>
               <tr>
@@ -130,11 +148,7 @@ const TableStudents = () => {
                     Class
                   </p>
                 </th>
-                <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                  <p className="block font-sans text-sm antialiased font-bold leading-none text-black opacity-70">
-                    Birthday
-                  </p>
-                </th>
+
                 <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold leading-none text-black opacity-70">
                     Gender
@@ -147,7 +161,22 @@ const TableStudents = () => {
                 </th>
                 <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
                   <p className="block font-sans text-sm antialiased font-bold leading-none text-black opacity-70">
-                    address
+                    Address
+                  </p>
+                </th>
+                <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
+                  <p className="block font-sans text-sm antialiased font-bold leading-none text-black opacity-70">
+                    Major
+                  </p>
+                </th>
+                <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
+                  <p className="block font-sans text-sm antialiased font-bold leading-none text-black opacity-70">
+                    Last Modified
+                  </p>
+                </th>
+                <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
+                  <p className="block font-sans text-sm antialiased font-bold leading-none text-black opacity-70">
+                    Created At
                   </p>
                 </th>
                 <th className="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
@@ -156,16 +185,22 @@ const TableStudents = () => {
               </tr>
             </thead>
             <tbody>
-              <Rowtable
-                card="1234"
-                name="Minh Thắng"
-                email="thanmn2104@gmail.com"
-                classID="21119B"
-                birthday="21/04/2003"
-                gender={1}
-                phone="0865848439"
-                address="Thủ đức"
-              />
+              {listStudent &&
+                listStudent.map((data) => (
+                  <Rowtable
+                    key={data.uid}
+                    card={data.card}
+                    name={data.name}
+                    email={data.email}
+                    major={data.major}
+                    classID={data.classID}
+                    gender={data.gender}
+                    phone={data.phoneNumber}
+                    address={data.address}
+                    lastModified={data.lastModified}
+                    createdAt={data.createdAt}
+                  />
+                ))}
             </tbody>
           </table>
         </div>
@@ -202,10 +237,12 @@ type RowtableType = {
   name: string;
   email: string;
   classID: string;
-  birthday: string;
   gender: number;
   phone: string;
   address: string;
+  major: string;
+  lastModified: string;
+  createdAt: string;
 };
 
 const Rowtable = ({
@@ -213,10 +250,12 @@ const Rowtable = ({
   name,
   email,
   classID,
-  birthday,
   gender,
   phone,
   address,
+  major,
+  lastModified,
+  createdAt,
 }: RowtableType) => {
   return (
     <tr>
@@ -246,15 +285,8 @@ const Rowtable = ({
         </div>
       </td>
       <td className="p-4 border-b border-blue-gray-50">
-        <div className="w-max">
-          <div className="relative grid items-center px-2 py-1 font-sans text-xs uppercase rounded-md select-none whitespace-nowrap">
-            <span className="">{birthday || ""}</span>
-          </div>
-        </div>
-      </td>
-      <td className="p-4 border-b border-blue-gray-50">
         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-          {gender === 1 ? "Nam" : "Nữ" || ""}
+          {gender === 0 ? "Nam" : "Nữ" || ""}
         </p>
       </td>
       <td className="p-4 border-b border-blue-gray-50">
@@ -265,6 +297,21 @@ const Rowtable = ({
       <td className="p-4 border-b border-blue-gray-50">
         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
           {address || ""}
+        </p>
+      </td>
+      <td className="p-4 border-b border-blue-gray-50">
+        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+          {major || ""}
+        </p>
+      </td>
+      <td className="p-4 border-b border-blue-gray-50">
+        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+          {moment(lastModified).format("DD/MM/YYYY") || ""}
+        </p>
+      </td>
+      <td className="p-4 border-b border-blue-gray-50">
+        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+          {moment(createdAt).format("DD/MM/YYYY") || ""}
         </p>
       </td>
       <td className="p-4 border-b border-blue-gray-50">

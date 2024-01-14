@@ -6,3 +6,12 @@
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
+
+.fadeBottom {
+  background: rgb(198, 207, 219);
+  background: linear-gradient(
+    0deg,
+    rgba(198, 207, 219, 1) 59%,
+    rgba(198, 207, 219, 0) 100%
+  );
+}
