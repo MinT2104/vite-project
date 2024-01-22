@@ -39,7 +39,7 @@ export const Navigation = () => {
   const path = window.location.pathname;
 
   return (
-    <div className="w-[300px] bg-white flex flex-col gap-6 fixed top-0 left-0 z-50 h-full">
+    <div className="w-[300px] bg-white flex flex-col gap-6 h-screen">
       <div className="py-10 h-16 flex gap-4 items-center">
         <div className="pl-16">
           <div className="h-10 w-10 border border-slate-300 flex items-center justify-center rounded-full ">

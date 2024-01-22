@@ -7,7 +7,9 @@ const path = window.location.pathname;
 export const useGetCardIDFromServer = (
   swipeCardState: any,
   setCardID: (data: string) => void,
-  setStudentData: (data: studentType) => void
+  setStudentData: (data: studentType) => void,
+  setIsPopupAttendance: (data: boolean) => void,
+  reFetching: () => void
 ) => {
   useEffect(() => {
     socket.on("cardID", function (countFromServer: any) {
@@ -25,11 +27,15 @@ export const useGetCardIDFromServer = (
     socket.on("attendanceData", function (res: any) {
       if (res.data !== null) {
         setStudentData(res.data);
+        setIsPopupAttendance(false);
       } else {
         console.log("nodata");
       }
     });
     return;
   }, []);
+
+  socket.on("refetchAttendance", reFetching);
+
   return;
 };

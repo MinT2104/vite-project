@@ -129,7 +129,7 @@ const TableStudents = () => {
             </div>
           </div>
         </div>
-        <div className="p-6 px-0 overflow-auto scrollbar">
+        <div className="p-6 px-6 overflow-auto scrollbar">
           <table className="w-full mt-4 text-left table-auto min-w-max">
             <thead>
               <tr>

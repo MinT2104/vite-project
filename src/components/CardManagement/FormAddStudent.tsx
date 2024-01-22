@@ -115,7 +115,7 @@ const FormAddStudent = () => {
   useClickOutside(classRef, setIsChooseClass);
   useClickOutside(genderRef, setIsChooseGender);
   return (
-    <section className="absolute w-full z-50 border h-full bg-transparent flex items-center justify-center">
+    <section className="animate-opacity absolute w-full z-50 border h-full bg-transparent flex items-center justify-center">
       <div
         onClick={() => {
           setSwipeCardState(false);

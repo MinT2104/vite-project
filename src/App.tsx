@@ -12,13 +12,28 @@ import { useSwipeCardStore } from "./stores/SwipeCard";
 import { useGetCardIDFromServer } from "./hooks/useMqttSubscribe";
 import { socket } from "./services/socket/socket";
 import { useStudentStore } from "./stores/StudentStore";
+import { usePopupStore } from "./stores/PopupStore";
 
 const App = () => {
-  const path = window.location.pathname;
   const { swipeCardState, setCardID } = useSwipeCardStore();
   const { setStudentData, studentData } = useStudentStore();
-  useGetCardIDFromServer(swipeCardState, setCardID, setStudentData);
-  console.log(studentData);
+  const {
+    setIsPopupAttendance,
+    setIsReFetchingAttendanceTable,
+    isReFetchingAttendanceTable,
+  } = usePopupStore();
+
+  const reFetching = () => {
+    setIsReFetchingAttendanceTable(!isReFetchingAttendanceTable);
+  };
+
+  useGetCardIDFromServer(
+    swipeCardState,
+    setCardID,
+    setStudentData,
+    setIsPopupAttendance,
+    reFetching
+  );
   return (
     <Routes>
       <Route
